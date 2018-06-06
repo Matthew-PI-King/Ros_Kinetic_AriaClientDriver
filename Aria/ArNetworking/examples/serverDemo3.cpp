@@ -187,6 +187,28 @@ void laserRequest_and_odom(ArServerClient *client, ArNetPacket *packet)
   client->sendPacketTcp(&sending);
 }
 
+void laserMetaDataRequest(ArServerClient *client, ArNetPacket *packet){
+
+  ArNetPacket sending;
+  sending.empty();
+
+  ArLaser* laser = robot.findLaser(1);
+  //ArLaser* laser = laserConnectorg->getLaser(1);
+  if(!laser){
+      printf("Could not connect to Laser... exiting\n");
+      Aria::exit(1);}
+ 
+  //std::cout<<laser->getStartDegrees()<<std::endl;
+  //std::cout<<laser->getEndDegrees()<<std::endl;
+
+  sending.byte4ToBuf((ArTypes::Byte4)(laser->getStartDegrees())); //in degrees.
+  sending.byte4ToBuf((ArTypes::Byte4)(laser->getEndDegrees())); //in degrees.
+
+  sending.finalizePacket();
+  client->sendPacketTcp(&sending);
+ 
+}
+
 int main(int argc, char **argv)
 {
   // mandatory init
@@ -206,6 +228,7 @@ int main(int argc, char **argv)
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> setVelRequestCB(&setVelRequest); 
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> moveStepRequestCB(&moveStepRequest); 
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> laserRequestCB2(&laserRequest_and_odom); //this is used for laserdata requests
+  ArGlobalFunctor2<ArServerClient *, ArNetPacket *> laserMetaDataRequestCB(&laserMetaDataRequest);
   // set up our simple connector
   ArRobotConnector robotConnector(&parser, &robot);
 
@@ -226,7 +249,9 @@ int main(int argc, char **argv)
   server.addData("LaserRequest", "custom command for server to enable laser data", &laserRequestCB, "none", "none"); //laser data request
   server.addData("SetVelRequest", "custom command for server to enable simple motion commands", &setVelRequestCB, "Byte2(velocity in mm/s)Byte2(rot velocity in deg/s)", "none"); //laser data request
   server.addData("MoveStepRequest", "custom command for server to enable simple motion commands", &moveStepRequestCB, "Byte2(move back distance in mm)", "none"); 
-server.addData("LaserRequest_odom", "custom command for server to enable laser data", &laserRequestCB2, "none", "none"); //laser data request
+  server.addData("LaserRequest_odom", "custom command for server to enable laser data", &laserRequestCB2, "none", "none"); //laser data request
+  server.addData("getLaserMetaData", "custom command to obtain laser metadata (Min Angle, Max Angle)", &laserMetaDataRequestCB, "none", "none"); //laser data request 
+
   ArServerSimpleOpener simpleOpener(&parser);
 
   ArLaserConnector laserConnector(&parser, &robot, &robotConnector);
