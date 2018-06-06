@@ -1,0 +1,23 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="ArActionGroup",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="ArActionGroupColorFollow",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupColorFollow.html",tooltip="Follows a blob of color."];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="ArActionGroupInput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupInput.html",tooltip="Action group to use to drive the robot with input actions (keyboard, joystick, etc..."];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="ArActionGroupRatioDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupRatioDrive.html",tooltip="Use keyboard and joystick input to to drive the robot, with Limiter actions to avoid..."];
+  Node1 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="ArActionGroupRatioDriveUnsafe",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupRatioDriveUnsafe.html",tooltip="Use keyboard and joystick input to to drive the robot, but without Limiter actions..."];
+  Node1 -> Node6 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="ArActionGroupStop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupStop.html",tooltip="Action group to stop the robot."];
+  Node1 -> Node7 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node7 [label="ArActionGroupTeleop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupTeleop.html",tooltip="Action group to teleopoperate the robot using ArActionJoydrive, and the Limiter actions..."];
+  Node1 -> Node8 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node8 [label="ArActionGroupUnguardedTeleop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupUnguardedTeleop.html",tooltip="Action group to teleoperate the robot using ArActionJoydrive, but without any Limiter..."];
+  Node1 -> Node9 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node9 [label="ArActionGroupWander",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArActionGroupWander.html",tooltip="Action group to make the robot wander, avoiding obstacles."];
+}

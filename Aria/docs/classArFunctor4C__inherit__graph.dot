@@ -1,0 +1,16 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  Node1 [label="ArFunctor4C\< T, P1, P2, P3, P4 \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="ArFunctor4\< P1, P2, P3, P4 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArFunctor4.html",tooltip="Base class for functors with 4 parameters."];
+  Node3 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="ArFunctor3\< P1, P2, P3 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArFunctor3.html",tooltip="Base class for functors with 3 parameters."];
+  Node4 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="ArFunctor2\< P1, P2 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArFunctor2.html",tooltip="Base class for functors with 2 parameters."];
+  Node5 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="ArFunctor1\< P1 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArFunctor1.html",tooltip="Base class for functors with 1 parameter."];
+  Node6 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="ArFunctor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArFunctor.html",tooltip="Base class for functors."];
+}

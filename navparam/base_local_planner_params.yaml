@@ -1,0 +1,11 @@
+TrajectoryPlannerROS:
+  max_vel_x: 50
+  min_vel_x: 1
+  max_rotational_vel: 1
+  min_in_place_rotational_vel: 0.1
+
+  acc_lim_th: 5
+  acc_lim_x: 5
+  acc_lim_y: 5
+
+  holonomic_robot: false

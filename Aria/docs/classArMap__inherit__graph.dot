@@ -1,0 +1,17 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="ArMap",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="ArMapInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArMapInterface.html"];
+  Node3 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="ArMapInfoInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArMapInfoInterface.html",tooltip="Methods related to setting and retrieving the various &quot;info&quot; tags in an..."];
+  Node4 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="ArMapObjectsInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArMapObjectsInterface.html",tooltip="Methods related to setting and retrieving the objects in an Aria map."];
+  Node5 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="ArMapScanInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArMapScanInterface.html",tooltip="Methods related to setting and retrieving the scan-related data in an Aria map."];
+  Node6 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="ArMapSupplementInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArMapSupplementInterface.html",tooltip="Methods related to miscellaneous extra data in an Aria map."];
+}

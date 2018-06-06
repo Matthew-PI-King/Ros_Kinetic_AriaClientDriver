@@ -1,0 +1,23 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="ArMode",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="ArModeActs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeActs.html",tooltip="Mode for following a color blob using ACTS."];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="ArModeCamera",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeCamera.html",tooltip="Mode for controlling the camera."];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="ArModeGripper",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeGripper.html",tooltip="Mode for controlling the gripper."];
+  Node1 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="ArModeSonar",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeSonar.html",tooltip="Mode for displaying the sonar."];
+  Node1 -> Node6 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="ArModeTCM2",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeTCM2.html",tooltip="Mode for following a color blob using ACTS."];
+  Node1 -> Node7 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node7 [label="ArModeTeleop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeTeleop.html",tooltip="Mode for teleoping the robot with joystick + keyboard."];
+  Node1 -> Node8 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node8 [label="ArModeUnguardedTeleop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeUnguardedTeleop.html",tooltip="Mode for teleoping the robot with joystick + keyboard."];
+  Node1 -> Node9 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node9 [label="ArModeWander",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArModeWander.html",tooltip="Mode for wandering around."];
+}

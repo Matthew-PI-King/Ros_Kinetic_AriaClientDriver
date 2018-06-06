@@ -1,0 +1,41 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="ArRangeDevice",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="ArBumpers",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArBumpers.html",tooltip="A class that treats the robot&#39;s bumpers as a range device."];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="ArForbiddenRangeDevice",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArForbiddenRangeDevice.html",tooltip="Class that takes forbidden lines and turns them into range readings."];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="ArIrrfDevice",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArIrrfDevice.html",tooltip="A class for connecting to a PB-9 and managing the resulting data."];
+  Node1 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="ArIRs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArIRs.html",tooltip="A class that treats the robot&#39;s Infareds as a range device."];
+  Node1 -> Node6 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="ArLaserReflectorDevice",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArLaserReflectorDevice.html",tooltip="A class for keeping track of laser reflectors that we see right now."];
+  Node1 -> Node7 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node7 [label="ArRangeDeviceThreaded",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArRangeDeviceThreaded.html",tooltip="A range device which can run in its own thread."];
+  Node7 -> Node8 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node8 [label="ArLaser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArLaser.html"];
+  Node8 -> Node9 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node9 [label="ArLaserFilter",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArLaserFilter.html",tooltip="Range device with data obtained from another range device and filtered."];
+  Node8 -> Node10 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node10 [label="ArLMS1XX",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArLMS1XX.html"];
+  Node8 -> Node11 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node11 [label="ArLMS2xx",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArLMS2xx.html",tooltip="Interface to a SICK LMS-200 laser range device."];
+  Node11 -> Node12 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node12 [label="ArSick",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArSick.html"];
+  Node8 -> Node13 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node13 [label="ArS3Series",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArS3Series.html"];
+  Node8 -> Node14 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node14 [label="ArSimulatedLaser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArSimulatedLaser.html"];
+  Node8 -> Node15 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node15 [label="ArSZSeries",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArSZSeries.html"];
+  Node8 -> Node16 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node16 [label="ArUrg",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArUrg.html"];
+  Node8 -> Node17 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node17 [label="ArUrg_2_0",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArUrg__2__0.html"];
+  Node1 -> Node18 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node18 [label="ArSonarDevice",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classArSonarDevice.html",tooltip="Keep track of recent sonar readings from a robot as an ArRangeDevice."];
+}

@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+
+<robot name="pioneer3dx">
+
+<!-- Chassis -->
+	<link name="/pioneer1/base_link">
+		<inertial>
+			<mass value="3.5"/>
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+				 izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="0 0 0.177" rpy="0 0 0"/>
+			<geometry name="pioneer_geom">
+				<box size="0.3 .24 .1"/>
+			</geometry>
+			<material name="ChassisRed">
+				<color rgba="0.851 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<box size="0.01 0.01 0.01"/>
+				</geometry>
+		</collision>
+	</link>
+
+<!-- Front Curve -->
+	<link name="/pioneer1/front_cyl">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="0.15 0 0.177" rpy="0 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.1" radius="0.12"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.851 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="base_top_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/front_cyl"/>
+	</joint>
+
+<!-- Back Curve -->
+	<link name="/pioneer1/back_cyl">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="-0.15 0 0.177" rpy="0 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.1" radius="0.12"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.851 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="back_curve_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/back_cyl"/>
+	</joint>
+
+<!-- Wheel 1 -->
+	<link name="/pioneer1/wheel1">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="0.15 0.16 0.14" rpy="1.57 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.04" radius="0.07"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.0 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="wheel1_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/wheel1"/>
+	</joint>
+
+<!-- Wheel 2 -->
+	<link name="/pioneer1/wheel2">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="0.15 -0.16 0.14" rpy="1.57 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.04" radius="0.07"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.0 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="wheel2_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/wheel2"/>
+	</joint>
+
+<!-- Wheel 3 -->
+	<link name="/pioneer1/wheel3">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="-0.15 0.16 0.14" rpy="1.57 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.04" radius="0.07"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.0 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="wheel3_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/wheel3"/>
+	</joint>
+
+<!-- Wheel 4 -->
+	<link name="/pioneer1/wheel4">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="base_visual">
+			<origin xyz="-0.15 -0.16 0.14" rpy="1.57 0 0"/>
+			<geometry name="pioneer_geom">
+				<cylinder length="0.04" radius="0.07"/>
+			</geometry>
+			<material name="TopBlack">
+					<color rgba="0.0 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="wheel4_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/wheel4"/>
+	</joint>
+<!-- RelocIR 
+	<link name="/pioneer1/IRcam">
+		<inertial>
+			<mass value="0"/>	
+			<origin xyz="-0.025 0 -0.223"/>
+			<inertia ixx="1" ixy="0" ixz="0"
+				 iyy="1" iyz="0"
+ 				izz="1"/>
+		</inertial>
+		<visual name="cam_visual">
+			<origin xyz="0 0.16 0.30" rpy="0 0 0"/>
+			<geometry name="pioneer_geom">
+				<box size="0.04 .02 .01"/>
+			</geometry>
+			<material name="Blue">
+					<color rgba="0.0 0.0 0.0 1.0"/>
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0 0 0"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<joint name="IRcam_joint" type="continuous">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<axis xyz="0 0 1"/>
+		<parent link="/pioneer1/base_link"/>
+		<child link="/pioneer1/IRcam"/>
+	</joint> -->
+
+</robot>
