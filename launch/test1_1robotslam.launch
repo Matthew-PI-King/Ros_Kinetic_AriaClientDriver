@@ -4,17 +4,16 @@
 	<group ns="pioneer1">
     		<param name="tf_prefix" value="pioneer1" />
 		<node name="ariaClientDriverNode" pkg="ariaclientdriver" type="ariaClientDriverNode" args="-host localhost -p 7272" output="screen"/>
-		<!--node name="ariaClientDriverNodesim" pkg="ariaClientDriver" type="ariaClientDriverNodesim5" args="-host 10.0.0.21" /-->
-		<node name="gmapping" pkg="gmapping" type="slam_gmapping">
-		<rosparam>
-odom_frame: odom
-base_frame: base_link
-map_frame: /map
-                </rosparam>
-		<remap from="map" to="/map" />
+		<node name="gmapping" pkg="gmapping" type="slam_gmapping" output="screen">
+		  <!--remap from="scan" to="/scan" /-->
+                  <remap from="map" to="/map"/>
+ 		  <param name="odom_frame" value="odom" />
+  		  <param name="base_frame" value="pioneer1/base_link" />
+                  <param name="map_update_interval" value="5.0"/>
+                  <param name="map_frame" value="/map" />
     		</node>
 	</group>
-	<node name="rviz" pkg="rviz" type="rviz" args="" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ariaclientdriver)/rviz_conf/basic.rviz" />
 	
 </launch>
 

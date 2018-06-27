@@ -22,8 +22,8 @@
 #include <kdl_parser/kdl_parser.hpp>
 
 //Ros masseges
-#include "../msg_gen/cpp/include/ariaClientDriver/AriaNavData.h"
-#include "../msg_gen/cpp/include/ariaClientDriver/AriaCommandData.h"
+//#include "../msg_gen/cpp/include/ariaClientDriver/AriaNavData.h"
+//#include "../msg_gen/cpp/include/ariaClientDriver/AriaCommandData.h"
 
 
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 		keyHandler.checkKeys();  //addthis if teleop from node required
 		ariaClientDriver.controlloop();
 		//Input output handling callback threads implemented in ariaClientDriver Class
-		ArUtil::sleep(100);	//noneed
+		//ArUtil::sleep(100);	//noneed
 
 	}
 

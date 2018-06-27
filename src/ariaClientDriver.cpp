@@ -23,8 +23,15 @@
 #include <std_msgs/Bool.h>
 #include "ariaClientDriver.h"
 #include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/NavSatFix.h>
+#include <ariaclientdriver/wEncoder.h>
+#include <ariaclientdriver/AriaNavData.h>
+#include <ariaclientdriver/AriaCommandData.h>
+
+
 //#include "ros/ros.h"
 
+using namespace ariaclientdriver;
 
 AriaClientDriver::AriaClientDriver(ArClientBase *client, ArKeyHandler *keyHandler, std::string robotName) :
 
@@ -51,7 +58,9 @@ AriaClientDriver::AriaClientDriver(ArClientBase *client, ArKeyHandler *keyHandle
   myHandleTemperatureInfoCB(this, &AriaClientDriver::handleTemperatureInfo),
   myHandleSensorInfoCB(this, &AriaClientDriver::handleSensorInfo),
   myHandleRangeDataCB(this, &AriaClientDriver::handleRangeData),
-  mygetLaserMetaDataCB(this, &AriaClientDriver::handleLaserMetaData)
+  mygetLaserMetaDataCB(this, &AriaClientDriver::handleLaserMetaData),
+  mygetGpsDataCB(this, &AriaClientDriver::handleGpsData),
+  mygetwEncoderDataCB(this, &AriaClientDriver::handleEncoderData)
 {
    printf("Initializing \n");
    //workaround for tf_prefix issue for laser
@@ -71,21 +80,28 @@ AriaClientDriver::AriaClientDriver(ArClientBase *client, ArKeyHandler *keyHandle
    myRobotStatePublisher= new robot_state_publisher::RobotStatePublisher(myKdlTree);	
 
    //critical thread performing command updates
-   myCmdVelSubscribe = myRosNodeHandle.subscribe("AriaCmdVel", 1, &AriaClientDriver::topicCallBack,this);
    //this is for direct motion command
    myTwistSubscribe = myRosNodeHandle.subscribe("cmd_vel", 1, &AriaClientDriver::topicCallBack2,this);
    myTwistSubscribe2 = myRosNodeHandle.subscribe("cmd_vel_ratio", 1, &AriaClientDriver::topicCallBack3,this);
    myDirectEnablerSubscribe = myRosNodeHandle.subscribe("direct_enable", 1, &AriaClientDriver::topicCallBack4,this);
-   myNavdataPublish = myRosNodeHandle.advertise<ariaClientDriver::AriaNavData>("AriaNavData", 1000);
    myLaserPublish = myRosNodeHandle.advertise<sensor_msgs::LaserScan>("scan", 50);
    myLaserPublish2 = myRosNodeHandle.advertise<sensor_msgs::PointCloud>("scan2", 50);
    myOdomPublish = myRosNodeHandle.advertise<nav_msgs::Odometry>("odom", 50);
+   myGpsPublish= myRosNodeHandle.advertise<sensor_msgs::NavSatFix>("gps", 50);
+   myEncoderPublish = myRosNodeHandle.advertise<ariaclientdriver::wEncoder>("wheelEncoder", 50);
 
    // Critical thread performing sensor data acquisition
 
      //row laser + synced odom request
      myClient->addHandler("LaserRequest_odom", &myHandleRangeDataCB);
      myClient->request("LaserRequest_odom", 100);
+   
+     myClient->addHandler("getGPS", &mygetGpsDataCB);
+     myClient->request("getGPS", 100);
+
+     myClient->addHandler("getwEncoder", &mygetwEncoderDataCB);
+     //myClient->request("getwEncoder", 100);
+     myClient->requestOnce("getwEncoder");
 
   //myCmdVelSubscribe = myRosNodeHandle.subscribe<std_msgs::String>("AriaCmdVel", 1, Foo());
 
@@ -241,14 +257,6 @@ void AriaClientDriver::resetTracking()
   myClient->resetTracking();
 }
 
-void AriaClientDriver::topicCallBack(const ariaClientDriver::AriaCommandData &msg) //deprecated
-{	//edit to decode the recieving packet
-	  //myTransRatio	=msg.TransRatio;
-	  //myRotRatio	=msg.RotRatio;
-	  //myLatRatio	=msg.LatRatio;
-	  //myMaxVel		=msg.MaxVel;
-	}
-
 void AriaClientDriver::topicCallBack2(const geometry_msgs::Twist &msg) //direct motion command (need server demo 3)
 {
     if(myDirectMotionEnabler){
@@ -399,11 +407,12 @@ void AriaClientDriver::handleRangeData(ArNetPacket *packet)
       sensor_msgs::LaserScan msg;
       msg.header.stamp=ros::Time::now();
       msg.header.frame_id=(std::string("/")+myRobotName+std::string("/base_laser")).c_str();
-      //msg.angle_min=-3*M_PI/4;        			// start angle of the scan [rad]
-      msg.angle_min=minLaserAngle;
-      //msg.angle_max=3*M_PI/4;       		// end angle of the scan [rad]
-      msg.angle_max=maxLaserAngle;
-      msg.angle_increment=(1.5*M_PI)/(NumberOfReadings-1);  	// angular distance between measurements [rad]
+      msg.angle_min=-3*M_PI/4;        			// start angle of the scan [rad]
+      //msg.angle_min=minLaserAngle;
+      msg.angle_max=3*M_PI/4;       		// end angle of the scan [rad]
+      //msg.angle_max=maxLaserAngle;
+      //msg.angle_increment=(maxLaserAngle-minLaserAngle)/(NumberOfReadings-1);  	// angular distance between measurements [rad] 
+      msg.angle_increment=(1.5*M_PI)/(NumberOfReadings-1);
       msg.time_increment=0.00024;//0.01333/180;   // time between measurements [seconds] ()75Hz motor
       msg.scan_time=0.03;//0.3;        		// time between scans [seconds]
       msg.range_min=0;        		// minimum range value [m]
@@ -446,8 +455,8 @@ void AriaClientDriver::handleRangeData(ArNetPacket *packet)
   	odom.twist.twist.linear.y = myLatVel/1000.0;
   	odom.twist.twist.angular.z = myRotVel/180*M_PI;
   	myOdomPublish.publish(odom);
-    	//myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,(myTh-myThbias)/180*M_PI), tf::Vector3((x_corr)/1000.0, (y_corr)/1000.0, 271/1000.0)),current_time,"odom","pioneer1/base_link"));
-	myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,0), tf::Vector3(0.0,0.0,0.0)),current_time,"odom","pioneer1/base_link"));
+    	myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,(myTh-myThbias)/180*M_PI), tf::Vector3((x_corr)/1000.0, (y_corr)/1000.0, 271/1000.0)),current_time,"odom","pioneer1/base_link"));
+	//myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,0), tf::Vector3(0.0,0.0,0.0)),current_time,"odom","pioneer1/base_link"));
   	//publish robot transforms
 
   		//TODO: FIX BELOW LINE!
@@ -463,7 +472,75 @@ void  AriaClientDriver::handleLaserMetaData(ArNetPacket *packet){
     minLaserAngle = M_PI*((double) packet->bufToByte4())/180; //convert degrees to radians.
     maxLaserAngle = M_PI*((double) packet->bufToByte4())/180;
 
+}
 
+
+//Callback function which recieved GPS data from the server and formats it for ROS.
+void AriaClientDriver::handleGpsData(ArNetPacket *packet){
+
+  //printf("Recieved GPS data");
+  //Packet Format [Lat, Lon, Altitude, FixType, numSattellitesTracked, PDOP, HDOP, VDOP]
+
+  float myLat = ((float) packet->bufToByte4())/1048576; //Previously there were sig figs which were being lost during conversion. To fix this, we multiply by 2^20 before sending and divide after. 
+  float myLon = ((float) packet->bufToByte4())/1048576;
+  float myAlt = ((float) packet->bufToByte4())/1048576;
+
+  //double myLat = packet->bufToByte8();
+  //double myLon = packet->bufToByte8();
+  //double myAlt = packet->bufToByte8();
+
+  int fixType = (int) packet->bufToByte4(); //different encoding.
+  int numSats = (int) packet->bufToByte4();
+  float PDOP = (float) packet->bufToByte4();
+  float HDOP = (float) packet->bufToByte4();
+  float VDOP = (float) packet->bufToByte4();
+  
+  //printf("lat:%f lon:%f alt:%f fixType:%i nSats:%d PDOP:%f HDOP:%f VDOP:%f", myLat, myLon, myAlt, fixType, numSats, PDOP, HDOP, VDOP);
+
+  sensor_msgs::NavSatFix msg;
+
+  msg.header.stamp=ros::Time::now();
+  msg.header.frame_id=(std::string("/")+myRobotName+std::string("/base_link")).c_str();
+
+  msg.status.status = 0; //FIXME
+  msg.status.service = 1; //FIXME these should not be hardcoded.
+
+  msg.latitude = myLat;
+  msg.longitude = myLon;
+  msg.altitude = myAlt;
+
+  //msg.position_covariance = []; 3x3 covariance matrix?
+  msg.position_covariance_type = 0; //FIXME 0 means unknown but it should be calculated based on PDOP HDOP and VDOP.
+  
+  myGpsPublish.publish(msg);
+}
+
+//Callback functionwhich recieves wheel encoder data from the server and formats it for ROS.
+void AriaClientDriver::handleEncoderData(ArNetPacket *packet){
+  /*
+  double x =((double) packet->bufToByte8())*0.001; 	//X velocity?
+  double y =((double) packet->bufToByte8())*0.001; 	//Y velocity?
+  double theta =((double) packet->bufToByte8())*0.001534; //Ask Patrick about these constants.
+  double left =((double) packet->bufToByte8())*0.001;
+  double right =((double) packet->bufToByte8())*0.001;
+  */
+
+  //packet->bufToByte2(); //discard the header
+
+  float x =((float) packet->bufToByte4()); 	
+  float y =((float) packet->bufToByte4()); 	
+  float theta =((float) packet->bufToByte4());
+  float left =((float) packet->bufToByte4());
+  float right =((float) packet->bufToByte4());
+
+  ariaclientdriver::wEncoder msg;
+  msg.X=x;
+  msg.Y=y;
+  msg.Th=theta;
+  msg.VelLeft=left;
+  msg.VelRight=right;
+
+  myEncoderPublish.publish(msg);
 }
 
 void AriaClientDriver::controlloop(){
@@ -474,4 +551,4 @@ void AriaClientDriver::controlloop(){
 }
 
 
-  //		  current_time,"base_link","base_reloc"));
+

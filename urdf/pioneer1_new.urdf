@@ -191,14 +191,14 @@
 <!-- Laser -->
 	<link name="base_laser">
 		<visual>
-			<origin xyz="0.16 0 0.1" rpy="0 0 0"/>
+			<origin xyz="0.53 0 0.1" rpy="0 0 0"/>
 			<geometry name="pioneer_geom">
 				<box size="0 0 0"/>
 			</geometry>
 		</visual>
 	</link>
         <joint name="laser_joint" type="fixed">
-		<origin xyz="0.16 0 0.1" rpy="0 0 0"/>
+		<origin xyz="0.53 0 0.1" rpy="0 0 0"/>
 		<parent link="base_link"/>
 		<child link="base_laser"/>
 	</joint>

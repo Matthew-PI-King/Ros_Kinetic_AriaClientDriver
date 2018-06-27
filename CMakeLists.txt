@@ -61,6 +61,7 @@ include_directories( /usr/local/Aria/ArNetworking/src)
    FILES
    AriaCommandData.msg
    AriaNavData.msg
+   wEncoder.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -81,6 +82,7 @@ include_directories( /usr/local/Aria/ArNetworking/src)
 generate_messages(
   DEPENDENCIES
   geometry_msgs std_msgs
+  
 )
 
 ################################################
@@ -114,7 +116,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES ariaclientdriver
+# LIBRARIES ariaclientdriver
   #CATKIN_DEPENDS geometry_msgs kdl_parser robot_state_publisher roscpp std_msgs tf
   CATKIN_DEPENDS geometry_msgs kdl_parser roscpp std_msgs tf
   #DEPENDS system_lib
@@ -176,6 +178,8 @@ add_executable(ariaClientDriverNode ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/src/aria
 
 target_link_libraries(ariaClientDriverNode ${catkin_LIBRARIES} ${Boost_LIBRARIES} Aria ArNetworking pthread dl rt #roscpp #robot_state_publisher
 )
+
+add_dependencies(ariaClientDriverNode ariaclientdriver_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
 
 #############
 ## Install ##

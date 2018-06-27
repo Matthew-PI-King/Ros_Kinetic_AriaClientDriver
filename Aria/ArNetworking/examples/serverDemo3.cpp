@@ -27,6 +27,10 @@ MobileRobots Inc, 10 Columbia Drive, Amherst, NH 03031; 800-639-9481
 #include "ArNetworking.h"
 #include <cmath>
 #include <math.h>
+//#include <mutex>
+#include "ArGPSConnector.h"
+#include <assert.h>
+#include "ArTrimbleGPS.h"
 
 
 #define PI 3.14159265
@@ -59,7 +63,18 @@ MobileRobots Inc, 10 Columbia Drive, Amherst, NH 03031; 800-639-9481
  * it in the background in Linux.  To modify it to allow that, remove the key
  * handler code in main().
  */
+//Aria vars
 ArRobot robot;
+ArGPS *_gps;
+
+//Clients for async operation.
+ArServerClient *gpsClient;
+ArServerClient *wEncoderClient;
+
+//std::mutex packet_mutex;
+//ArRobotPacket encoderPacket;
+unsigned int cmd_wE;
+
 //NEW LASER DATA REQUESt CAPABILITY
 void laserRequest(ArServerClient *client, ArNetPacket *packet)
 { 
@@ -209,6 +224,136 @@ void laserMetaDataRequest(ArServerClient *client, ArNetPacket *packet){
  
 }
 
+void getGPSRequest(ArServerClient *client, ArNetPacket *packet)
+{
+  
+  if(_gps->readWithLock(10))
+  {
+  
+  float lat = _gps->getLatitude();
+  float lon = _gps->getLongitude();
+  float alt = _gps->getAltitude();
+  int fixType = _gps->getFixType();
+  int nSats = _gps->getNumSatellitesTracked();
+  float PDOP =  _gps->getPDOP();
+  float HDOP =  _gps->getHDOP();
+  float VDOP = _gps->getVDOP();
+  //printf("lat:%f lon:%f alt:%f fixType:%i nSats:%d PDOP:%f HDOP:%f VDOP:%f \n", lat, lon, alt, fixType, nSats, PDOP, HDOP, VDOP);
+  
+  ArNetPacket sending;
+  sending.empty();
+  //Packet Format [Lat(B8), Lon(B8), Altitude(B8), FixType, numSattellitesTracked, PDOP, HDOP, VDOP]
+  
+  sending.byte4ToBuf((ArTypes::Byte4) (lat*1048576)); //This will preserve sig figs which were otherwise being lost in translation/transfer. Specific value chosen because 2^20 = 1048576. Optimize?
+  sending.byte4ToBuf((ArTypes::Byte4) (lon*1048576)); //It actually works. Just divide back out on the other side.
+  sending.byte4ToBuf((ArTypes::Byte4) (alt*1048576)); //I promise.
+
+  //sending.byte8ToBuf(lat);
+  //sending.byte8ToBuf(lon);
+  //sending.byte8ToBuf(alt);
+
+  sending.byte4ToBuf((ArTypes::Byte4) fixType);
+  sending.byte4ToBuf((ArTypes::Byte4) nSats);
+  sending.byte4ToBuf((ArTypes::Byte4) PDOP);
+  sending.byte4ToBuf((ArTypes::Byte4) HDOP);
+  sending.byte4ToBuf((ArTypes::Byte4) VDOP);
+ 
+  //printf(sending.getCommand());
+  //robot.unlock();
+
+  sending.finalizePacket();
+  client->sendPacketTcp(&sending);
+  }
+
+}
+
+bool handleSIPPacket(ArRobotPacket *packet)
+{
+  /*if (packet->getID() == 50){
+    if(packet_mutex.try_lock())
+    {
+      encoderPacket = *packet;
+      packet_mutex.unlock();
+    }
+  }
+  return false; //why
+  */
+
+  //packet_mutex.lock();
+  if (packet->getID() == 50)
+  {	
+    float x1 = ((float) packet->bufToByte2()); 
+    //printf("x = %f \n",x1);
+    float y1 = ((float) packet->bufToByte2());
+    //printf("y = %f \n",y1);   
+    float th1 = ((float) packet->bufToByte2());
+    //printf("theta = %f \n",th1);  
+    float leftvel = ((float) packet->bufToByte2());
+    //printf("left velocity = %f \n",leftvel);  
+    float rightvel = ((float) packet->bufToByte2());	
+    //printf("right velocity = %f \n",rightvel);
+
+    //packet_mutex.unlock();
+
+    ArNetPacket sending;
+    //std::string n = "getwEncoder";
+
+    sending.empty();
+
+    sending.setCommand((ArTypes::UByte2) cmd_wE); //Header   
+
+    sending.byte4ToBuf((ArTypes::Byte4) x1);
+    sending.byte4ToBuf((ArTypes::Byte4) y1);
+    sending.byte4ToBuf((ArTypes::Byte4) th1);
+    sending.byte4ToBuf((ArTypes::Byte4) leftvel);
+    sending.byte4ToBuf((ArTypes::Byte4) rightvel);
+
+    sending.finalizePacket();
+  
+    if(wEncoderClient)
+    {
+      //printf("Sending!");
+      wEncoderClient->sendPacketTcp(&sending);
+      //return true
+    }
+  } 
+  return false; //Does this mean anything, or is it just to satisfy template?
+
+}
+
+void getWheelEncoderData(ArServerClient *client, ArNetPacket *packet)
+{
+  wEncoderClient = client; 
+
+  /*
+  packet_mutex.lock();
+  	
+  float x1 = ((float) encoderPacket->bufToByte2())*0.001;	
+  printf("x = %f \n",x1);
+  float y1 = ((float) encoderPacket->bufToByte2())*0.001;
+  printf("y = %f \n",y1);   
+  float th1 = ((float) encoderPacket->bufToByte2())*0.001534;
+  printf("theta = %f \n",th1);  
+  float leftvel = ((float) encoderPacket->bufToByte2())*0.001;
+  printf("left velocity = %f \n",leftvel);  
+  float rightvel = ((float) encoderPacket->bufToByte2())*0.001;	
+  printf("right velocity = %f \n",rightvel);
+
+  packet_mutex.unlock();
+
+  ArNetPacket sending;
+  sending.empty();
+  sending.byte8ToBuf((ArTypes::Byte8) x1);
+  sending.byte8ToBuf((ArTypes::Byte8) y1);
+  sending.byte8ToBuf((ArTypes::Byte8) th1);
+  sending.byte8ToBuf((ArTypes::Byte8) leftvel);
+  sending.byte8ToBuf((ArTypes::Byte8) rightvel);
+
+  sending.finalizePacket();
+  client->sendPacketTcp(&sending);
+  */
+}
+
 int main(int argc, char **argv)
 {
   // mandatory init
@@ -229,13 +374,12 @@ int main(int argc, char **argv)
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> moveStepRequestCB(&moveStepRequest); 
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> laserRequestCB2(&laserRequest_and_odom); //this is used for laserdata requests
   ArGlobalFunctor2<ArServerClient *, ArNetPacket *> laserMetaDataRequestCB(&laserMetaDataRequest);
+  
+  ArGlobalFunctor2<ArServerClient *, ArNetPacket *> getGPSRequestCB(&getGPSRequest);  
+  ArGlobalFunctor2<ArServerClient *, ArNetPacket *> wEncoderCB(&getWheelEncoderData); 
+
   // set up our simple connector
   ArRobotConnector robotConnector(&parser, &robot);
-
-
-  // add a gyro, it'll see if it should attach to the robot or not
-  ArAnalogGyro gyro(&robot);
-
 
   // set up the robot for connecting
   if (!robotConnector.connectRobot())
@@ -244,6 +388,33 @@ int main(int argc, char **argv)
     Aria::exit(1);
   }
 
+  // On the Seekur, power to the GPS receiver is switched on by this command.
+  // (A third argument of 0 would turn it off). On other robots this command is
+  // ignored.
+  robot.com2Bytes(116, 6, 1);
+
+  ArGPSConnector gpsConnector(&parser);
+
+  //connect to the GPS
+  ArGPS *gps = gpsConnector.createGPS(&robot);
+  assert(gps);
+  if(!gps || !(gps->connect()))
+  {
+    ArLog::log(ArLog::Terse, "gpsRobotTaskExample: Error connecting to GPS device.  Try -gpsType, -gpsPort, and/or -gpsBaud command-line arguments. Use -help for help. Exiting.");
+    return -3;
+  }
+  _gps=gps;
+
+  ArGlobalRetFunctor1<bool, ArRobotPacket *> handleSIPCB(&handleSIPPacket);
+  // add our packet handler as the first one in the list
+  robot.addPacketHandler(&handleSIPCB, ArListPos::FIRST);
+
+
+  // add a gyro, it'll see if it should attach to the robot or not
+  ArAnalogGyro gyro(&robot);
+
+
+
   // our base server object
   ArServerBase server;
   server.addData("LaserRequest", "custom command for server to enable laser data", &laserRequestCB, "none", "none"); //laser data request
@@ -251,9 +422,14 @@ int main(int argc, char **argv)
   server.addData("MoveStepRequest", "custom command for server to enable simple motion commands", &moveStepRequestCB, "Byte2(move back distance in mm)", "none"); 
   server.addData("LaserRequest_odom", "custom command for server to enable laser data", &laserRequestCB2, "none", "none"); //laser data request
   server.addData("getLaserMetaData", "custom command to obtain laser metadata (Min Angle, Max Angle)", &laserMetaDataRequestCB, "none", "none"); //laser data request 
+  //NEW Aditions
+  server.addData("getGPS", "custom command to directly obtain GPS data", &getGPSRequestCB, "none","none");
+  server.addData("getwEncoder", "custom command to access raw wheel encoder data", &wEncoderCB, "none","none");
+
+  std::string n = "getwEncoder";
+  cmd_wE = server.findCommandFromName(n.c_str()); //find the command code for this type so that we may send these packets async.
 
   ArServerSimpleOpener simpleOpener(&parser);
-
   ArLaserConnector laserConnector(&parser, &robot, &robotConnector);
  
   // Tell the laser connector to always connect the first laser since
@@ -412,9 +588,6 @@ int main(int argc, char **argv)
     printf("To exit, press escape.\n");
   }
   
-  //user code   
-
-
 
   clientSwitchManager.runAsync();
 

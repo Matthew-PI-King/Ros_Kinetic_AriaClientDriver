@@ -28,7 +28,6 @@ public:
   //Robot Command Requests   use as a call back for a subscriber
   //use sendinput itself as the call back for constant control (i.e. sustained control inputs available)
   //The two methods below makes the robot stop when theres no control inputs
-  void topicCallBack(const ariaClientDriver::AriaCommandData &msg);		/// Decode incoming masseges
   void topicCallBack2(const geometry_msgs::Twist &msg);		/// Decode incoming Twist masseges
   void topicCallBack3(const geometry_msgs::Twist &msg);		/// ratio command
   void topicCallBack4(const std_msgs::Bool &msg);		/// direct motion enabler
@@ -50,6 +49,7 @@ public:
   void handlePhysicalInfo(ArNetPacket *packet);		/// This is called when the physical robot information comes back
   void handleTemperatureInfo(ArNetPacket *packet);	/// This callback is called when an update on the temperature information changes
   void handleSensorInfo(ArNetPacket *packet);		/// This callback is called when an update on the temperature information changes
+  void handleGpsData(ArNetPacket *packet);
 
 
   void controlloop();
@@ -65,6 +65,8 @@ public:
   ros::Publisher myLaserPublish;				//Publish standard massesge laser data (nav stack prerequisit)
   ros::Publisher myOdomPublish;					//Publish standard massesge Odometry (nav stack prerequisit)
   ros::Publisher myLaserPublish2;
+  ros::Publisher myGpsPublish;
+  ros::Publisher myEncoderPublish;  //semi-processed encoder data (for "processing" see serverDemo3 or equivalent).
 
   ros::ServiceServer myLaserLocalizationService;
   ros::ServiceServer mySafeDriveService;
@@ -122,6 +124,7 @@ protected:
   //Robot Data Requests      These are call back for data requests p->publish inside
   void handleRangeData(ArNetPacket *packet);		/// This callback is called when an update on the temperature information changes
   void handleLaserMetaData(ArNetPacket *packet);
+  void handleEncoderData(ArNetPacket *packet);
 
 
 
@@ -146,6 +149,8 @@ protected:
   ArFunctor1C<AriaClientDriver, ArNetPacket *> myHandleSensorInfoCB;
   ArFunctor1C<AriaClientDriver, ArNetPacket *> myHandleRangeDataCB;
   ArFunctor1C<AriaClientDriver, ArNetPacket *> mygetLaserMetaDataCB; //laser angles.
+  ArFunctor1C<AriaClientDriver, ArNetPacket *> mygetGpsDataCB;
+  ArFunctor1C<AriaClientDriver, ArNetPacket *> mygetwEncoderDataCB;
 
 };
 
