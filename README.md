@@ -6,7 +6,7 @@ This is a Driver node for pioneer robots (or any robot) running using ARIA libra
 
 The package is a client software with a ROS wrapper which connects with ARIA SDK based servers running on robots. The user simply runs the server on the robot`s host computer and runs the ROS client on a remote machine. This allows a quick and easy way to integrate robots running ARIA to a ROS based multi-robot framework.
 
-##IMPORTANT NOTE
+## IMPORTANT NOTE
 The name of this repository is different from the name of the catkin package.
 After cloning into your ~/catkin_ws/src directory you must either rename the directory to "ariaclientdriver" or rename the package (from within CMakeList.txt) to match the directory.
 
