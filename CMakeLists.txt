@@ -115,7 +115,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+#  INCLUDE_DIRS include
 # LIBRARIES ariaclientdriver
   #CATKIN_DEPENDS geometry_msgs kdl_parser robot_state_publisher roscpp std_msgs tf
   CATKIN_DEPENDS geometry_msgs kdl_parser roscpp std_msgs tf
