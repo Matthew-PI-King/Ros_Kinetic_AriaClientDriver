@@ -6,6 +6,11 @@ This is a Driver node for pioneer robots (or any robot) running using ARIA libra
 
 The package is a client software with a ROS wrapper which connects with ARIA SDK based servers running on robots. The user simply runs the server on the robot`s host computer and runs the ROS client on a remote machine. This allows a quick and easy way to integrate robots running ARIA to a ROS based multi-robot framework.
 
+##IMPORTANT NOTE
+The name of this repository is different from the name of the catkin package.
+After cloning into your ~/catkin_ws/src directory you must either rename the directory to "ariaclientdriver" or rename the package (from within CMakeList.txt) to match the directory.
+
+
 ## Installation
 1. Install the following from the mobile robots site (The instructions assumes a 32 bit Ubuntu system. For other systems please find the corresponding files in these links):
 
@@ -15,7 +20,7 @@ The package is a client software with a ROS wrapper which connects with ARIA SDK
 
 	* ARNL Libraries (Optional- Not required for simulation): Navigate to http://robots.mobilerobots.com/wiki/ARNL,_SONARNL_and_MOGS and install Base ARNL Library 1.9.0 - Ubuntu 12.04.2 (precise) or later, 32-bit i386 architecture  and ARNL Laser Localization Library 1.9.0 - Ubuntu 12.04.2 (precise) or later, 32-bit i386 architecture.
 	
-2. The package is tested on ROS fuerte using rosbuild system on 32-bit Ubuntu 12.04.
+2. The package is tested on ROS Kinetic using Catkin on Ubuntu 16.04 LTS.
 To install and configure ROS fuerte please use the steps detailed in the following link: http://wiki.ros.org/fuerte/Installation/Ubuntu 
 
 3. Use the following steps to configure a ros_workspace directory (if not already configured):
