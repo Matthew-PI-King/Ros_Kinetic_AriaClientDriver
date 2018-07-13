@@ -265,24 +265,25 @@ void AriaClientDriver::topicCallBack2(const geometry_msgs::Twist &msg) //direct 
 	//myRotRatio		=msg.angular.z*10.0;
 	//myLatRatio		=msg.linear.y*10.0;
 	//myMaxVel		=100.0;
-	double vel=msg.linear.x*1000.0;
- 	double rotVel=msg.angular.z/M_PI*180.0;
+	double vel=msg.linear.x*100.0;
+ 	double rotVel=msg.angular.z;
 
 	ArNetPacket request;
   	request.empty();
   	//printf("Requesting set vel %lf\n", vel);
-  	request.byte2ToBuf((ArTypes::Byte2)(vel));
-	request.byte2ToBuf((ArTypes::Byte2)(rotVel));
+  	request.byte4ToBuf((ArTypes::Byte4)(vel));
+	request.byte4ToBuf((ArTypes::Byte4)(rotVel));
   	myClient->requestOnce("SetVelRequest",&request);}
 }
 
 void AriaClientDriver::topicCallBack3(const geometry_msgs::Twist &msg) //ratio motion command
 {
 	//should modify arnl server to accept velocities
-	myTransRatio		=msg.linear.x*10.0;
-	myRotRatio		=msg.angular.z*10.0;
+	myTransRatio		=msg.linear.x*100.0;
+	myRotRatio		=msg.angular.z/M_PI*180;
 	myLatRatio		=msg.linear.y*10.0;
-	myMaxVel		=100.0;
+	//myMaxVel		=100.0;
+	deltaT_Command = ros::Time::now();
 }
 
 void AriaClientDriver::topicCallBack4(const std_msgs::Bool &msg){
@@ -310,9 +311,12 @@ void AriaClientDriver::sendInput() //generic motion command
   if (myPrinting)
     printf("Sending\n");
   myClient->requestOnce("ratioDrive", &packet);
-  myTransRatio = 0;
-  myRotRatio = 0;
-  myLatRatio = 0;
+  if(ros::Time::now() - deltaT_Command > ros::Duration(1))
+  {
+    myTransRatio = 0;
+    myRotRatio = 0;
+    myLatRatio = 0;
+  }
 }
 
 

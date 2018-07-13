@@ -1,0 +1,21 @@
+scan_filter_chain:
+- name: angle
+  type: LaserScanAngularBoundsFilterInPlace
+  params:
+    lower_angle: 2.05
+    upper_angle: 2.5
+- name: angle2
+  type: LaserScanAngularBoundsFilter
+  params:
+    lower_angle: -2.5
+    upper_angle: -2.05
+- name: shadows
+  type: ScanShadowsFilter
+  params:
+    min_angle: 5
+    max_angle: 180
+    neighbors: 2
+    window: 1
+- name: interpolation
+  type: InterpolationFilter
+

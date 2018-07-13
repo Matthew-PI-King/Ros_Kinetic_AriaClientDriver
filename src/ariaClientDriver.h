@@ -121,6 +121,8 @@ protected:
   double minLaserAngle; //radians
   double maxLaserAngle; //radians
 
+  ros::Time deltaT_Command;
+
   //Robot Data Requests      These are call back for data requests p->publish inside
   void handleRangeData(ArNetPacket *packet);		/// This callback is called when an update on the temperature information changes
   void handleLaserMetaData(ArNetPacket *packet);

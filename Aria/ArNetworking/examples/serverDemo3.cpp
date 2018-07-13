@@ -106,11 +106,11 @@ void setVelRequest(ArServerClient *client, ArNetPacket *packet)
   robot.lock();
   double vel;
   double rotVel;
-  vel=(double)packet->bufToByte2();
-  rotVel=(double)packet->bufToByte2();
+  vel=(double)packet->bufToByte4();
+  rotVel=(double)packet->bufToByte4();
   printf("recieved data %lf,%lf\n", vel,rotVel);
   robot.setVel(vel);
-  robot.setRotVel(rotVel);
+  robot.setHeading(rotVel);
   robot.unlock();
 }
 

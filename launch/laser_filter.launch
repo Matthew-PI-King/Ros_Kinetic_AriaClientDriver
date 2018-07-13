@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain"
+      name="laser_filter">
+    <rosparam command="load" file="$(find ariaclientdriver)/my_laser_config.yaml" />
+    <remap from="scan" to="/pioneer1/scan" />
+  </node>
+</launch>
