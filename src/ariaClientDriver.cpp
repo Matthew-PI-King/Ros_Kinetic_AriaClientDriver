@@ -145,7 +145,7 @@ AriaClientDriver::AriaClientDriver(ArClientBase *client, ArKeyHandler *keyHandle
 	  myClient->requestOnce("getLaserMetaData");
   }
 
-  unsafeDrive();
+  safeDrive();
   printf("Aria Client Driver node started...\n");
 //printf("Debugging...\n");
 //myClient->logDataList();

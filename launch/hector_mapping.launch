@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="tf_map_scanmatch_transform_frame_name" default="scanmatcher_frame"/>
+
+  <arg name="tf_map_scanmatch_transform_frame_name" default="odom"/>
   <arg name="base_frame" default="/pioneer1/base_link"/>
-  <arg name="odom_frame" default="/pioneer1/base_link"/>
-  <arg name="pub_map_odom_transform" default="false"/>
+  <arg name="odom_frame" default="odom"/>
+  <arg name="pub_map_odom_transform" default="true"/>
   <arg name="scan_subscriber_queue_size" default="5"/>
-  <arg name="scan_topic" default="scan_filtered"/>
+  <arg name="scan_topic" default="pioneer1/scan_filtered"/>
   <arg name="map_size" default="2048"/>
   
   <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
-    
+
     <!-- Frame names -->
     <param name="map_frame" value="map" />
     <param name="base_frame" value="$(arg base_frame)" />
@@ -50,6 +51,21 @@
     -->
     <param name="tf_map_scanmatch_transform_frame_name" value="$(arg tf_map_scanmatch_transform_frame_name)" />
   </node>
+  <param name="robot_description" textfile="$(find ariaclientdriver)/urdf/pioneer1_new.urdf" />
+	<group ns="pioneer1">
+    		<param name="tf_prefix" value="pioneer1" />
+		<node name="ariaClientDriverNode" pkg="ariaclientdriver" type="ariaClientDriverNode" args="-host 10.0.125.32 -p 7272" output="screen"/>
+		<!--node name="ariaClientDriverNodesim" pkg="ariaClientDriver" type="ariaClientDriverNodesim5" args="-host 10.0.0.21" /-->
+		<node pkg="laser_filters" type="scan_to_scan_filter_chain"
+      		name="laser_filter">
+    		<rosparam command="load" file="$(find ariaclientdriver)/my_laser_config.yaml" />
+    		<!--remap from="scan" to="/pioneer1/scan" /-->
+		<!--remap from="scan_filtered" to="pioneer1/scan_filtered"-->
+  		</node>
+
+	</group>
+	<node name="static_tf_pub" pkg="tf" type="static_transform_publisher" args=" 0.43 0 0.2175 0 0 0 /pioneer1/base_link /laser_link 20" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ariaclientdriver)/rviz_conf/basic.rviz" />
     
   <!--<node pkg="tf" type="static_transform_publisher" name="map_nav_broadcaster" args="0 0 0 0 0 0 map nav 100"/>-->
 </launch>

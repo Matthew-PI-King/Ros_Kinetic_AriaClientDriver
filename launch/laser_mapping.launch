@@ -21,7 +21,7 @@
     		</node>
 
 	</group>
-
+	<node name="static_tf_pub" pkg="tf" type="static_transform_publisher" args=" 0.43 0 0.2175 0 0 0 /pioneer1/base_link /laser_link 20" />
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ariaclientdriver)/rviz_conf/basic.rviz" />
 	
 </launch>

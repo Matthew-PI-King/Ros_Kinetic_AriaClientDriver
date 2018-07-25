@@ -18,4 +18,12 @@ scan_filter_chain:
     window: 1
 - name: interpolation
   type: InterpolationFilter
+- name: range
+  type: LaserScanRangeFilter
+  params:
+    use_message_range_limits: false
+    lower_threshold: 0.5
+    upper_threshold: 15
+    lower_replacement_value: -.inf
+    upper_replacement_value: .inf
 
