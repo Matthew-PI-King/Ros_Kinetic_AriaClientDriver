@@ -118,6 +118,9 @@ protected:
   double myYbias;
   double myThbias;
 
+  double lastX;
+  double lastY;
+
   double minLaserAngle; //radians
   double maxLaserAngle; //radians
 

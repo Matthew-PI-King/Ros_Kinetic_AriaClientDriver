@@ -410,7 +410,7 @@ void AriaClientDriver::handleRangeData(ArNetPacket *packet)
     //Assemble and publish laser scan massege
       sensor_msgs::LaserScan msg;
       msg.header.stamp=ros::Time::now();
-      msg.header.frame_id=(std::string("/")+myRobotName+std::string("/base_laser")).c_str();
+      msg.header.frame_id=(myRobotName+std::string("/base_laser")).c_str();
       msg.angle_min=-3*M_PI/4;        			// start angle of the scan [rad]
       //msg.angle_min=minLaserAngle;
       msg.angle_max=3*M_PI/4;       		// end angle of the scan [rad]
@@ -437,7 +437,13 @@ void AriaClientDriver::handleRangeData(ArNetPacket *packet)
 		myYbias=myY;
 		myThbias=myTh;
 		printf("Bias X:%f \tBias Y:%f \tBias Th:%f \t\n",myXbias,myYbias,myThbias);
+
+		lastX=cos((myThbias)/180*M_PI)*(myX-myXbias)+sin((myThbias)/180*M_PI)*(myY-myYbias)/1000;
+		lastY==-sin((myThbias)/180*M_PI)*(myX-myXbias)+cos((myThbias)/180*M_PI)*(myY-myYbias)/1000;
+		
 	 	myNeedToInitialize=false;
+		
+
 	}
 
 	//corected pose
@@ -445,29 +451,39 @@ void AriaClientDriver::handleRangeData(ArNetPacket *packet)
         double y_corr=-sin((myThbias)/180*M_PI)*(myX-myXbias)+cos((myThbias)/180*M_PI)*(myY-myYbias);
     
 
-    //Assemble and publish odometry massege  
+    	//Assemble and publish odometry massege  
+	double newX=(x_corr)/1000.0;
+	double newY=(y_corr)/1000.0;
+
+	if(abs(newX-lastX) < 5 && abs(newY-lastY) <5)
+	{
+
+	lastX=newX; //update
+	lastY=newY;
+
     	ros::Time current_time=ros::Time::now();
   	nav_msgs::Odometry odom;
   	odom.header.stamp = current_time;
   	odom.header.frame_id ="odom";
-  	odom.pose.pose.position.x = (x_corr)/1000.0;
-  	odom.pose.pose.position.y = (y_corr)/1000.0;
+  	odom.pose.pose.position.x = newX;
+  	odom.pose.pose.position.y = newY;
   	odom.pose.pose.position.z = 0.0;
   	odom.pose.pose.orientation = tf::createQuaternionMsgFromYaw((myTh-myThbias)/180*M_PI);
   	odom.child_frame_id = "pioneer1/base_link";
-  	odom.twist.twist.linear.x = myVel/1000.0;
-  	odom.twist.twist.linear.y = myLatVel/1000.0;
+  	odom.twist.twist.linear.x = myVel/1000.0*cos(myTh-myThbias/180*M_PI);
+  	odom.twist.twist.linear.y = myVel/1000.0*sin(myTh-myThbias/180*M_PI);
+	//std::cout<<myTh-myThbias<<std::endl;
   	odom.twist.twist.angular.z = myRotVel/180*M_PI;
   	myOdomPublish.publish(odom);
     	myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,(myTh-myThbias)/180*M_PI), tf::Vector3((x_corr)/1000.0, (y_corr)/1000.0, 271/1000.0)),current_time,"odom","pioneer1/base_link"));
 	//myTfBroadcaster.sendTransform(tf::StampedTransform(tf::Transform(tf::createQuaternionFromRPY(0.0,0.0,0), tf::Vector3(0.0,0.0,0.0)),current_time,"odom","pioneer1/base_link"));
   	//publish robot transforms
-
+	}
   		//TODO: FIX BELOW LINE!
   	myRobotStatePublisher->publishFixedTransforms(myRobotName); 
 	//myRobotStatePublisher->publishFixedTransforms(); 
         //printf("Initializing pose...\n ");
-
+	
 	
 }
 
